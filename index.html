@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://zyhong360.com">
-  <title>Zyhong的博客</title>
+  <title>zyhong的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
-<meta property="og:title" content="Zyhong的博客">
+<meta property="og:title" content="zyhong的博客">
 <meta property="og:url" content="http://zyhong360.com/index.html">
-<meta property="og:site_name" content="Zyhong的博客">
+<meta property="og:site_name" content="zyhong的博客">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Zyhong的博客">
+<meta name="twitter:title" content="zyhong的博客">
   
-    <link rel="alternative" href="/atom.xml" title="Zyhong的博客" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="zyhong的博客" type="application/atom+xml">
   
   
     <link rel="icon" href="/myfavicon.ico">
@@ -363,104 +363,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-使用angular中的service和filter编写组件树" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/08/05/使用angular中的service和filter编写组件树/">使用angular中的service和filter编写组件树</a>
-    </h1>
-  
-
-        
-        <a href="/2017/08/05/使用angular中的service和filter编写组件树/" class="archive-article-date">
-  	<time datetime="2017-08-05T08:49:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>学习《AngularJS深度剖析与实践》总结</p>
-<ul>
-<li>在我们平时的开发中，需要对某些数据进行以树的形式进行展现，比如：权限角色、菜单、嵌套评论等。这个时候我们需要使用angular进行对数据抽象，构造我们自己的组件树：</li>
-<li>例子：我们就拿主题树作为一个例子，然后一步一步去优雅的实现它:</li>
-</ul>
-</blockquote>
-<ol>
-<li>首先我们准备好angular的库文件，建立好相应的目录及文件，按照angular遵循的风格：约定优于配置。首先我们创建一个用于展示的目录，theme-tree<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkdir theme-tree &amp;&amp; cd $_</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>2.创建需要展示的html页面文件:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">touch index.html</div></pre></td></tr></table></figure></p>
-<p>3.创建存放项目js文件的目录:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkdir js</div></pre></td></tr></table></figure></p>
-<p>4.创建存放angular项目的controller目录、service目录和filter目录:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkdir controller &amp;&amp; mkdir service &amp;&amp; mkdir filter</div></pre></td></tr></table></figure></p>
-<p>5.创建angular项目的入口文件，app.js<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cd js &amp;&amp; touch app.js</div></pre></td></tr></table></figure></p>
-<p>6.目前先不考虑UI效果部分，主要以实现功能为主，我们使用bower来安装和管理相应的js第三方库文件，如果没有安装bower工具，可以借助npm进行安装-npm install -g bower ,在我们创建的theme-tree目录下，键入如下命令安装angular库的依赖：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bower install angular --save</div></pre></td></tr></table></figure></p>
-<p>以上命令实行完毕后我们的目录结构如下：<br><img src="http://upload-images.jianshu.io/upload_images/1310396-c3be8338ba3a864d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="目录文件显示"></p>
-<p>7.接下来我们开始编辑js/app.js入口文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">angular.module(&apos;myApp&apos;, []);</div></pre></td></tr></table></figure></p>
-<p>8.接下来我们开始编写控制器文件js/controller/index.client.controller.js:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">angular.module(&apos;myApp&apos;).controller(&quot;ThreedTreeCtrl&quot;,function ThreedTreeCtrl(tree) &#123;</div><div class="line">        var vm = this;</div><div class="line">        vm.items = [&#123;</div><div class="line">                id: 1,</div><div class="line">                title: &quot;Java&quot;,</div><div class="line">                poster: &quot;Messi&quot;,</div><div class="line">                dateCreated: &quot;2012-02-19T00:00:00&quot;,</div><div class="line">                items: [&#123;</div><div class="line">                        id: 11,</div><div class="line">                        title: &apos;Spring&apos;,</div><div class="line">                        poster: &apos;John&apos;,</div><div class="line">                        dateCreated: &quot;2012-02-19T00:00:00&quot;,</div><div class="line">                        items: [</div><div class="line">                                &#123;</div><div class="line">                                        id: 111,</div><div class="line">                                        title: &apos;AOP&apos;,</div><div class="line">                                        poster: &apos;Mike&apos;,</div><div class="line">                                        dateCreated: &quot;2016-02-19T00:00:00&quot;,</div><div class="line">                                         items: [</div><div class="line">                                &#123;</div><div class="line">                                        id: 1111,</div><div class="line">                                        title: &apos;IOC&apos;,</div><div class="line">                                        poster: &apos;Jack&apos;]</div><div class="line">                                &#125;</div><div class="line">                        ]</div><div class="line">                &#125;, &#123;</div><div class="line"></div><div class="line">                                id: 2,</div><div class="line">                                title: &quot;SpringBoot&quot;,</div><div class="line">                                poster: &quot;Lucy&quot;,</div><div class="line">                                dateCreated: &quot;2011-02-19T00:00:00&quot;</div><div class="line">                        &#125;</div><div class="line">                ]</div><div class="line">        &#125;, &#123;</div><div class="line">                        id: 2,</div><div class="line">                        title: &quot;JavaScript&quot;,</div><div class="line">                        poster: &quot;Jack&quot;,</div><div class="line">                        dateCreated: &quot;2012-02-19T00:00:00&quot;,</div><div class="line">                &#125;</div><div class="line">        ];</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>以上内容很简单，构建了一个ThreedTreeCtrl控制器，里面嵌套了一些随意的数据，主要是为了模拟父子关系；</p>
-<p>9.接下来我们编辑js/service/index.client.service.js文件，用于对数据进行附加相应的行为。思考一下，当我们有了这样一组数据后，我们要为它添加什么方法和属性，首先应该添加父节点是否折叠，此属性主要是为了在界面显示的时候展开或折叠子节点数据。当展开的时候我们使用“-”表示，折叠的时候我们使用”+”表示，当折叠时单击节点应该展开子节点，当展开的时候，单击子节点应该折叠父节点；将新增的属性和方法为了减小和原始数据冲突，并且这些数据通过$http或者$resource提交给服务器，它们所调用的angular.toJso()函数会忽略所有以$开头的属性，这样我们扩展的属性就不会被提交到服务端了。还有一个方便的是，当我们看到数据上有”$”开头的属性就是扩展的属性。接下来我们实现它：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">angular.module(&apos;myApp&apos;).service(&apos;tree&apos;,function Tree()&#123;</div><div class="line">    var self = this;</div><div class="line">    //为每一项节点添加属性和方法</div><div class="line">    var enhanceItem = function(item,childrenName)&#123;</div><div class="line">        item.$hasChildren = function()&#123;</div><div class="line">            var subItems = this[childrenName];</div><div class="line">            return angular.isArray(subItems) &amp;&amp; subItems.length;</div><div class="line">        &#125;;</div><div class="line">        item.$foldToggle = function()&#123;</div><div class="line">            this.$folded = !this.$folded;</div><div class="line">        &#125;;</div><div class="line">        item.$isFolded = function()&#123;</div><div class="line">            return this.$folded;</div><div class="line">        &#125;;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    //对传进来的数据进行强化</div><div class="line">    this.enhance = function(items,childrenName)&#123;</div><div class="line">        if(angular.isUndefined(childrenName))&#123;</div><div class="line">            childrenName = &quot;items&quot;;</div><div class="line">        &#125;</div><div class="line">        angular.forEach(items,function(item)&#123;</div><div class="line">            enhanceItem(item,childrenName);</div><div class="line">            //如果有子节点则递归处理</div><div class="line">            self.enhance(item[childrenName],childrenName);</div><div class="line">        &#125;);</div><div class="line">        console.log(items);</div><div class="line">        return items;</div><div class="line">    &#125;;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>10.这样我们完成了对数据进行强化，此时我们如果直接在controller调用service的enhance 方法，将服务端返回的json数据进行加强，为他们添加的相应的属性和方法，然后在页面进行展示调用就可以了，但是这样感觉比较脏，不干净，我们不在contrller直接调用service里面的enhance 方法，我们可以创建一个过滤器来对数据进行添加过滤的功能，接下来我们开始编辑filter/index.client.filter.js:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">angular.module(&apos;myApp&apos;).filter(&apos;tree&apos;,function(tree)&#123;</div><div class="line">    return function(items,childrenName)&#123;</div><div class="line">        tree.enhance(items,childrenName);</div><div class="line">        return items;</div><div class="line">    &#125;;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>11.接下来编写html文件，开始对主题树进行展现并且引入相关文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line"></div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta charset=&quot;utf-8&quot;&gt;</div><div class="line">&lt;/head&gt;</div><div class="line"></div><div class="line">&lt;body&gt;</div><div class="line"></div><div class="line">    &lt;div ng-app=&quot;myApp&quot; ng-controller=&quot;ThreedTreeCtrl as vm&quot;&gt;</div><div class="line">        &lt;ul ng-if=&quot;vm.items&quot;&gt;</div><div class="line">            &lt;li ng-repeat=&quot;item1 in vm.items | tree&quot;&gt;</div><div class="line">                &lt;div ng-click=&quot;item1.$foldToggle()&quot;&gt;</div><div class="line">                    &lt;span ng-if=&quot;item1.$hasChildren()&quot;&gt;</div><div class="line">                    &lt;span ng-if=&quot;!item1.$isFolded()&quot;&gt;-&lt;/span&gt;</div><div class="line">                    &lt;span ng-if=&quot;item1.$isFolded()&quot;&gt;+&lt;/span&gt;</div><div class="line">                    &lt;/span&gt;</div><div class="line">                    &#123;&#123; item1.title &#125;&#125;</div><div class="line">                &lt;/div&gt;</div><div class="line"></div><div class="line">                &lt;ul ng-if=&quot;item1.$hasChildren() &amp;&amp; !item1.$isFolded()&quot;&gt;</div><div class="line">                    &lt;li ng-repeat=&quot;item2 in item1.items&quot;&gt;</div><div class="line">                        &lt;div ng-click=&quot;item2.$foldToggle()&quot;&gt;</div><div class="line">                            &lt;span ng-if=&quot;item2.$hasChildren()&quot;&gt;</div><div class="line">                    &lt;span ng-if=&quot;!item2.$isFolded()&quot;&gt;-&lt;/span&gt;</div><div class="line">                            &lt;span ng-if=&quot;item2.$isFolded()&quot;&gt;+&lt;/span&gt;</div><div class="line">                            &lt;/span&gt;</div><div class="line">                            &#123;&#123; item2.title &#125;&#125;</div><div class="line">                        &lt;/div&gt;</div><div class="line"></div><div class="line">                        &lt;ul ng-if=&quot;item2.$hasChildren() &amp;&amp; !item2.$isFolded()&quot;&gt;</div><div class="line">                            &lt;li ng-repeat=&quot;item3 in item2.items&quot;&gt;</div><div class="line">                                &#123;&#123; item3.title &#125;&#125;</div><div class="line">                            &lt;/li&gt;</div><div class="line">                        &lt;/ul&gt;</div><div class="line">                    &lt;/li&gt;</div><div class="line">                &lt;/ul&gt;</div><div class="line">            &lt;/li&gt;</div><div class="line">        &lt;/ul&gt;</div><div class="line"></div><div class="line">    &lt;/div&gt;</div><div class="line">    &lt;script src=&quot;bower_components/angular/angular.js&quot;&gt;&lt;/script&gt;</div><div class="line">    &lt;script src=&quot;js/app.js&quot;&gt;&lt;/script&gt;</div><div class="line">     &lt;script src=&quot;js/controller/index.client.controller.js&quot;&gt;&lt;/script&gt;</div><div class="line">    &lt;script src=&quot;js/service/index.client.service.js&quot;&gt;&lt;/script&gt;</div><div class="line">    &lt;script src=&quot;js/filters/index.client.filter.js&quot;&gt;&lt;/script&gt;</div><div class="line">    </div><div class="line">     </div><div class="line">&lt;/body&gt;</div><div class="line"></div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
-<p>此时我们便完成了对主题树功能的实现，在index.html文件中，我们只展示了两层嵌套关系以作为示例，根据自己的业务场景进行扩展。<br>以上实现还不够优雅，等待以后需要将主题递归树封装为指令，最后附上github地址:<br><a href="https://github.com/strongant/angularjs" target="_blank" rel="external">https://github.com/strongant/angularjs</a><br>源码位于此仓库下的angular-tree目录，欢迎提出issue。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">angularjs</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/08/05/使用angular中的service和filter编写组件树/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
 
 
@@ -565,10 +467,6 @@ getOwnMetadataKeys:function(t){return o(i(t),arguments.length<2?void 0:u(argumen
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">git</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">angularjs</a>
               </li>
             
             <div class="clearfix"></div>
